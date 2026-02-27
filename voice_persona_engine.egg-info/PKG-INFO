@@ -1,0 +1,196 @@
+Metadata-Version: 2.4
+Name: voice-persona-engine
+Version: 0.1.0
+Summary: A lightweight framework for injecting personality into AI-generated responses
+Author-email: Anmol Dhingra <hello@anmol.one>
+License: MIT
+Project-URL: Homepage, https://github.com/anmoldhingra1/voice-persona-engine
+Project-URL: Documentation, https://github.com/anmoldhingra1/voice-persona-engine#readme
+Project-URL: Repository, https://github.com/anmoldhingra1/voice-persona-engine.git
+Project-URL: Issues, https://github.com/anmoldhingra1/voice-persona-engine/issues
+Keywords: ai,personality,voice,llm,nlp,personas
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0; extra == "dev"
+Requires-Dist: black>=23.0; extra == "dev"
+Requires-Dist: ruff>=0.1.0; extra == "dev"
+Requires-Dist: mypy>=1.0; extra == "dev"
+Dynamic: license-file
+
+# Voice Persona Engine
+
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A lightweight framework for injecting personality into AI-generated responses. Define personas with trait vectors, apply them to any LLM output, and maintain consistent voice across applications.
+
+## Overview
+
+Voice Persona Engine enables you to:
+- Define AI personas through configurable trait vectors (warmth, humor, formality, energy, empathy, assertiveness)
+- Dynamically modulate LLM prompts based on persona configuration
+- Generate consistent system prompts tailored to your persona
+- Blend multiple personas for nuanced character expression
+
+Perfect for building AI hosts, voice assistants, chatbots, and content generation systems that require consistent personality.
+
+## Installation
+
+```bash
+pip install voice-persona-engine
+```
+
+## Quick Start
+
+```python
+from persona import PersonaEngine, PersonaTraits
+
+# Create an engine instance
+engine = PersonaEngine()
+
+# Use a preset persona
+friendly_host = engine.create_persona(
+    name="friendly_host",
+    traits=PersonaTraits.FRIENDLY_HOST
+)
+
+# Apply to text
+text = "Thank you for joining us today."
+transformed = engine.apply_persona(text, friendly_host)
+print(transformed)
+# Output: "Oh, thank you so much for joining us today! We're thrilled to have you here."
+
+# Generate a system prompt for your LLM
+system_prompt = engine.generate_system_prompt(friendly_host)
+print(system_prompt)
+```
+
+## Features
+
+### Trait Vectors
+Define personas using six personality dimensions:
+
+- **Warmth** (0.0-1.0): How friendly and approachable
+- **Humor** (0.0-1.0): Level of wit and comedic timing
+- **Formality** (0.0-1.0): Professional vs. casual language
+- **Energy** (0.0-1.0): Enthusiasm and dynamism
+- **Empathy** (0.0-1.0): Emotional attunement to audience
+- **Assertiveness** (0.0-1.0): Confidence and directness
+
+### Preset Personas
+
+```python
+from persona.traits import PersonaTraits
+
+# Available presets
+traits = PersonaTraits.FRIENDLY_HOST
+traits = PersonaTraits.PROFESSIONAL_ANALYST
+traits = PersonaTraits.ENERGETIC_MC
+traits = PersonaTraits.CALM_GUIDE
+```
+
+### Persona Blending
+
+Smoothly transition between personas:
+
+```python
+blended = engine.blend_personas(
+    professional_analyst,
+    friendly_host,
+    weight=0.7  # 70% analyst, 30% host
+)
+```
+
+## API Reference
+
+### PersonaEngine
+
+#### `create_persona(name: str, traits: PersonaTraits) -> Persona`
+Create a new persona with the given name and traits.
+
+#### `apply_persona(text: str, persona: Persona) -> str`
+Transform input text by applying the persona's traits.
+
+#### `generate_system_prompt(persona: Persona) -> str`
+Generate an LLM system prompt tuned to the persona.
+
+#### `blend_personas(persona_a: Persona, persona_b: Persona, weight: float) -> Persona`
+Blend two personas. Weight 0.0 = persona_a only, 1.0 = persona_b only.
+
+### PersonaTraits
+
+Dataclass with attributes: `warmth`, `humor`, `formality`, `energy`, `empathy`, `assertiveness`.
+
+Use `PersonaTraits()` for custom traits or `PersonaTraits.PRESET_NAME` for presets.
+
+## Architecture
+
+```
+voice-persona-engine/
+├── persona/
+│   ├── engine.py          # Core PersonaEngine class
+│   ├── traits.py          # Trait definitions and presets
+│   ├── prompts.py         # System prompt templates
+│   └── __init__.py        # Public API
+├── examples/
+│   └── basic_usage.py     # Demo scripts
+└── tests/
+    └── test_engine.py     # Unit tests
+```
+
+The engine works by:
+1. Loading or creating a persona (trait vector)
+2. Selecting appropriate prompt templates based on traits
+3. Dynamically weighting language modifiers (intensifiers, qualifiers)
+4. Returning transformed text or system prompts
+
+## Example Use Cases
+
+### AI Host for Podcast
+```python
+host_persona = engine.create_persona(
+    name="podcast_host",
+    traits=PersonaTraits(
+        warmth=0.9, humor=0.8, formality=0.3,
+        energy=0.9, empathy=0.8, assertiveness=0.6
+    )
+)
+system_prompt = engine.generate_system_prompt(host_persona)
+# Use system_prompt with Claude, GPT-4, or other LLM
+```
+
+### Professional Data Analyst
+```python
+analyst_persona = engine.create_persona(
+    name="analyst",
+    traits=PersonaTraits.PROFESSIONAL_ANALYST
+)
+analysis = engine.apply_persona(
+    "Sales increased by 15% this quarter.",
+    analyst_persona
+)
+```
+
+## Contributing
+
+Contributions welcome! Please open issues and pull requests on GitHub.
+
+## License
+
+MIT License - see LICENSE file for details.
+
+---
+
+Built by [Anmol Dhingra](https://anmol.one)

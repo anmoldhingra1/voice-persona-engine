@@ -1,0 +1,12 @@
+LICENSE
+README.md
+pyproject.toml
+persona/__init__.py
+persona/engine.py
+persona/prompts.py
+persona/traits.py
+voice_persona_engine.egg-info/PKG-INFO
+voice_persona_engine.egg-info/SOURCES.txt
+voice_persona_engine.egg-info/dependency_links.txt
+voice_persona_engine.egg-info/requires.txt
+voice_persona_engine.egg-info/top_level.txt
