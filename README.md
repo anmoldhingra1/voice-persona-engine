@@ -1,17 +1,19 @@
 # Voice Persona Engine
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![CI](https://github.com/anmoldhingra1/voice-persona-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/anmoldhingra1/voice-persona-engine/actions/workflows/ci.yml)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A lightweight framework for injecting personality into AI-generated responses. Define personas with trait vectors, apply them to any LLM output, and maintain consistent voice across applications.
+A lightweight Python framework for injecting personality into AI-generated responses. Define personas with trait vectors, apply them to LLM outputs, and maintain consistent voice across applications.
 
 ## Overview
 
 Voice Persona Engine enables you to:
 - Define AI personas through configurable trait vectors (warmth, humor, formality, energy, empathy, assertiveness)
 - Dynamically modulate LLM prompts based on persona configuration
-- Generate consistent system prompts tailored to your persona
+- Generate system prompts tailored to your persona's personality
 - Blend multiple personas for nuanced character expression
+- Apply text transformations based on personality traits
 
 Perfect for building AI hosts, voice assistants, chatbots, and content generation systems that require consistent personality.
 
@@ -44,122 +46,153 @@ print(transformed)
 # Generate a system prompt for your LLM
 system_prompt = engine.generate_system_prompt(friendly_host)
 print(system_prompt)
+# Use with Claude, GPT-4, or other LLMs
 ```
 
 ## Features
 
-### Trait Vectors
-Define personas using six personality dimensions:
+### Six Personality Traits
 
-- **Warmth** (0.0-1.0): How friendly and approachable
-- **Humor** (0.0-1.0): Level of wit and comedic timing
-- **Formality** (0.0-1.0): Professional vs. casual language
-- **Energy** (0.0-1.0): Enthusiasm and dynamism
-- **Empathy** (0.0-1.0): Emotional attunement to audience
-- **Assertiveness** (0.0-1.0): Confidence and directness
+Personas are defined using six dimensions, each ranging from 0.0 to 1.0:
+
+- **Warmth**: How friendly and approachable (0.0=cold, 1.0=extremely warm)
+- **Humor**: Level of wit and comedic timing (0.0=no humor, 1.0=very funny)
+- **Formality**: Professional vs. casual language (0.0=casual, 1.0=formal)
+- **Energy**: Enthusiasm and dynamism (0.0=lethargic, 1.0=highly energetic)
+- **Empathy**: Emotional attunement to audience (0.0=detached, 1.0=deeply empathetic)
+- **Assertiveness**: Confidence and directness (0.0=tentative, 1.0=highly assertive)
 
 ### Preset Personas
+
+Four ready-to-use personas for common scenarios:
 
 ```python
 from persona.traits import PersonaTraits
 
 # Available presets
-traits = PersonaTraits.FRIENDLY_HOST
-traits = PersonaTraits.PROFESSIONAL_ANALYST
-traits = PersonaTraits.ENERGETIC_MC
-traits = PersonaTraits.CALM_GUIDE
+traits = PersonaTraits.FRIENDLY_HOST          # Warm, enthusiastic host
+traits = PersonaTraits.PROFESSIONAL_ANALYST   # Measured, data-driven analyst
+traits = PersonaTraits.ENERGETIC_MC           # High-energy master of ceremonies
+traits = PersonaTraits.CALM_GUIDE             # Serene, empathetic guide
 ```
 
-### Persona Blending
+### Core API
 
-Smoothly transition between personas:
+#### PersonaEngine
 
 ```python
+engine = PersonaEngine()
+
+# Create personas
+persona = engine.create_persona(name, traits, overwrite=False)
+
+# Manage personas
+retrieved = engine.get_persona(name)
+all_names = engine.list_personas()
+deleted = engine.delete_persona(name)
+
+# Apply personalities
+transformed = engine.apply_persona(text, persona, enhance=True)
+
+# Generate prompts
+prompt = engine.generate_system_prompt(persona)
+
+# Blend personas
 blended = engine.blend_personas(
-    professional_analyst,
-    friendly_host,
-    weight=0.7  # 70% analyst, 30% host
+    persona_a, persona_b, 
+    weight=0.5,
+    save_as="blended_name"
 )
+
+# Get info
+info = engine.get_persona_info(name)
 ```
 
-## API Reference
+#### PersonaTraits
 
-### PersonaEngine
+Create custom traits or use presets:
 
-#### `create_persona(name: str, traits: PersonaTraits) -> Persona`
-Create a new persona with the given name and traits.
-
-#### `apply_persona(text: str, persona: Persona) -> str`
-Transform input text by applying the persona's traits.
-
-#### `generate_system_prompt(persona: Persona) -> str`
-Generate an LLM system prompt tuned to the persona.
-
-#### `blend_personas(persona_a: Persona, persona_b: Persona, weight: float) -> Persona`
-Blend two personas. Weight 0.0 = persona_a only, 1.0 = persona_b only.
-
-### PersonaTraits
-
-Dataclass with attributes: `warmth`, `humor`, `formality`, `energy`, `empathy`, `assertiveness`.
-
-Use `PersonaTraits()` for custom traits or `PersonaTraits.PRESET_NAME` for presets.
-
-## Architecture
-
-```
-voice-persona-engine/
-├── persona/
-│   ├── engine.py          # Core PersonaEngine class
-│   ├── traits.py          # Trait definitions and presets
-│   ├── prompts.py         # System prompt templates
-│   └── __init__.py        # Public API
-├── examples/
-│   └── basic_usage.py     # Demo scripts
-└── tests/
-    └── test_engine.py     # Unit tests
-```
-
-The engine works by:
-1. Loading or creating a persona (trait vector)
-2. Selecting appropriate prompt templates based on traits
-3. Dynamically weighting language modifiers (intensifiers, qualifiers)
-4. Returning transformed text or system prompts
-
-## Example Use Cases
-
-### AI Host for Podcast
 ```python
-host_persona = engine.create_persona(
-    name="podcast_host",
-    traits=PersonaTraits(
-        warmth=0.9, humor=0.8, formality=0.3,
-        energy=0.9, empathy=0.8, assertiveness=0.6
-    )
+# Defaults to all 0.5
+traits = PersonaTraits()
+
+# Custom traits
+traits = PersonaTraits(
+    warmth=0.9,
+    humor=0.8,
+    formality=0.3,
+    energy=0.8,
+    empathy=0.9,
+    assertiveness=0.5
 )
-system_prompt = engine.generate_system_prompt(host_persona)
-# Use system_prompt with Claude, GPT-4, or other LLM
+
+# From dictionary
+traits = PersonaTraits.from_dict({
+    "warmth": 0.8,
+    "humor": 0.6,
+})
+
+# Blend traits
+blended = traits_a.blend(traits_b, weight=0.6)
 ```
 
-### Professional Data Analyst
+## Use Cases
+
+### AI Podcast Host
+
 ```python
-analyst_persona = engine.create_persona(
-    name="analyst",
-    traits=PersonaTraits.PROFESSIONAL_ANALYST
+host = engine.create_persona(
+    "podcast_host",
+    PersonaTraits.FRIENDLY_HOST
+)
+system_prompt = engine.generate_system_prompt(host)
+# Use with your LLM to generate podcast content
+```
+
+### Professional Analysis
+
+```python
+analyst = engine.create_persona(
+    "analyst",
+    PersonaTraits.PROFESSIONAL_ANALYST
 )
 analysis = engine.apply_persona(
     "Sales increased by 15% this quarter.",
-    analyst_persona
+    analyst
 )
+```
+
+### Conversational Assistant
+
+```python
+# Create a balanced persona
+assistant = engine.create_persona(
+    "assistant",
+    PersonaTraits(
+        warmth=0.7, humor=0.5, formality=0.6,
+        energy=0.6, empathy=0.8, assertiveness=0.5
+    )
+)
+prompt = engine.generate_system_prompt(assistant)
 ```
 
 ## Contributing
 
-Contributions welcome! Please open issues and pull requests on GitHub.
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Testing
+
+Run the test suite:
+
+```bash
+pip install -e ".[dev]"
+pytest tests/ -v
+```
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-Built by [Anmol Dhingra](https://anmol.one)
+Built with clarity and simplicity in mind. [Learn more](https://anmol.one).

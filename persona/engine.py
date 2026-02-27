@@ -3,8 +3,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from persona.traits import PersonaTraits
 from persona.prompts import build_system_prompt, get_text_modifiers
+from persona.traits import PersonaTraits
 
 
 @dataclass
@@ -81,7 +81,8 @@ class PersonaEngine:
             ValueError: If persona with that name already exists (unless overwrite=True)
         """
         if name in self._personas and not overwrite:
-            raise ValueError(f"Persona '{name}' already exists. Set overwrite=True to replace.")
+            msg = f"Persona '{name}' already exists. Set overwrite=True to replace."
+            raise ValueError(msg)
 
         persona = Persona(name=name, traits=traits)
         self._personas[name] = persona
@@ -149,7 +150,7 @@ class PersonaEngine:
             return text
 
         traits = persona.traits
-        modifiers = get_text_modifiers(
+        _ = get_text_modifiers(
             warmth=traits.warmth,
             humor=traits.humor,
             formality=traits.formality,
@@ -200,7 +201,9 @@ class PersonaEngine:
 
         Example:
             engine = PersonaEngine()
-            analyst = engine.create_persona("analyst", PersonaTraits.PROFESSIONAL_ANALYST)
+            analyst = engine.create_persona(
+                "analyst", PersonaTraits.PROFESSIONAL_ANALYST
+            )
             prompt = engine.generate_system_prompt(analyst)
             # Use prompt with Claude, GPT-4, etc.
         """

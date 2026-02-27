@@ -175,20 +175,34 @@ def get_text_modifiers(
     Returns:
         Dictionary of modifier lists keyed by trait name
     """
-    warmth_intensifiers = ["really", "truly", "genuinely", "sincerely"] if warmth > 0.6 else []
+    warmth_intensifiers = (
+        ["really", "truly", "genuinely", "sincerely"] if warmth > 0.6 else []
+    )
     warmth_qualifiers = ["perhaps", "maybe", "if I may"] if warmth > 0.7 else []
 
-    humor_additions = ["with a smile", "tongue in cheek", "jokingly"] if humor > 0.6 else []
+    humor_additions = (
+        ["with a smile", "tongue in cheek", "jokingly"] if humor > 0.6 else []
+    )
 
-    formality_contractions = ["I'm", "you're", "don't"] if formality < 0.6 else ["I am", "you are", "do not"]
+    formality_contractions = (
+        ["I'm", "you're", "don't"]
+        if formality < 0.6
+        else ["I am", "you are", "do not"]
+    )
 
-    energy_intensifiers = ["absolutely", "definitely", "certainly"] if energy > 0.7 else []
+    energy_intensifiers = (
+        ["absolutely", "definitely", "certainly"] if energy > 0.7 else []
+    )
     energy_qualifiers = ["quietly", "softly", "gently"] if energy < 0.4 else []
 
     empathy_phrases = ["I understand", "I see", "that makes sense"] if empathy > 0.6 else []
 
-    assertiveness_qualifiers = ["perhaps", "you might consider"] if assertiveness < 0.4 else []
-    assertiveness_imperatives = ["do this", "must happen"] if assertiveness > 0.7 else []
+    assertiveness_qualifiers = (
+        ["perhaps", "you might consider"] if assertiveness < 0.4 else []
+    )
+    assertiveness_imperatives = (
+        ["do this", "must happen"] if assertiveness > 0.7 else []
+    )
 
     return {
         "warmth_intensifiers": warmth_intensifiers,

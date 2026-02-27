@@ -3,10 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from typing_extensions import Self
 
 
 @dataclass
@@ -36,16 +32,17 @@ class PersonaTraits:
     def __post_init__(self) -> None:
         """Validate that all traits are in the valid range."""
         traits = {
-            'warmth': self.warmth,
-            'humor': self.humor,
-            'formality': self.formality,
-            'energy': self.energy,
-            'empathy': self.empathy,
-            'assertiveness': self.assertiveness,
+            "warmth": self.warmth,
+            "humor": self.humor,
+            "formality": self.formality,
+            "energy": self.energy,
+            "empathy": self.empathy,
+            "assertiveness": self.assertiveness,
         }
         for name, value in traits.items():
             if not 0.0 <= value <= 1.0:
-                raise ValueError(f"{name} must be between 0.0 and 1.0, got {value}")
+                msg = f"{name} must be between 0.0 and 1.0, got {value}"
+                raise ValueError(msg)
 
     def blend(self, other: PersonaTraits, weight: float) -> PersonaTraits:
         """
@@ -62,7 +59,8 @@ class PersonaTraits:
             ValueError: If weight is not between 0.0 and 1.0
         """
         if not 0.0 <= weight <= 1.0:
-            raise ValueError(f"weight must be between 0.0 and 1.0, got {weight}")
+            msg = f"weight must be between 0.0 and 1.0, got {weight}"
+            raise ValueError(msg)
 
         other_weight = 1.0 - weight
         return PersonaTraits(
@@ -71,7 +69,8 @@ class PersonaTraits:
             formality=self.formality * weight + other.formality * other_weight,
             energy=self.energy * weight + other.energy * other_weight,
             empathy=self.empathy * weight + other.empathy * other_weight,
-            assertiveness=self.assertiveness * weight + other.assertiveness * other_weight,
+            assertiveness=self.assertiveness * weight
+            + other.assertiveness * other_weight,
         )
 
     @classmethod
@@ -85,7 +84,9 @@ class PersonaTraits:
         Returns:
             A new PersonaTraits instance
         """
-        return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
+        return cls(
+            **{k: v for k, v in data.items() if k in cls.__dataclass_fields__}
+        )
 
 
 # Preset personas for common use cases

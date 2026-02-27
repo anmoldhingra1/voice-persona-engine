@@ -126,7 +126,7 @@ def example_persona_management() -> None:
 
     # Get info about a persona
     info = engine.get_persona_info("host")
-    print(f"\nHost persona info:")
+    print("\nHost persona info:")
     print(f"  Name: {info['name']}")
     print(f"  Warmth: {info['traits']['warmth']}")
     print(f"  Energy: {info['traits']['energy']}")
