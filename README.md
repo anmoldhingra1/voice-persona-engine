@@ -4,9 +4,11 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A lightweight Python framework for injecting personality into AI-generated responses. Define personas with trait vectors, apply them to LLM outputs, and maintain consistent voice across applications.
+A lightweight Python framework for shaping consistent AI personas. Define personas with trait vectors, apply them to LLM outputs, and keep tone stable across generated responses.
 
 ## Overview
+
+This is a small public slice of the Rerato orchestration thesis: voice and personality should be controlled as product primitives, not improvised in one-off prompts.
 
 Voice Persona Engine enables you to:
 - Define AI personas through configurable trait vectors (warmth, humor, formality, energy, empathy, assertiveness)
@@ -17,10 +19,20 @@ Voice Persona Engine enables you to:
 
 Perfect for building AI hosts, voice assistants, chatbots, and content generation systems that require consistent personality.
 
+## What It Shows
+
+- Trait-vector persona modeling
+- Prompt generation from structured persona state
+- Persona blending for nuanced host behavior
+- Text shaping for consistent tone experiments
+- A simple API that can sit above any LLM provider
+
 ## Installation
 
 ```bash
-pip install voice-persona-engine
+git clone https://github.com/anmoldhingra1/voice-persona-engine.git
+cd voice-persona-engine
+pip install -e ".[dev]"
 ```
 
 ## Quick Start
@@ -195,4 +207,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-Built with clarity and simplicity in mind. [Learn more](https://anmol.one).
+Built by [Anmol Dhingra](https://github.com/anmoldhingra1), founder of [Rerato](https://trivana.ai).
